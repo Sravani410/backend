@@ -1,9 +1,10 @@
 const PORT = 8080;
 const express = require("express");
 const app = express();
-
+const cors = require("cors");
 app.use(express.json());
-
+const ConnectDb = require("./config/db");
+app.use(cors());
 const courses = [
   { id: 1, name: "Algorithms" },
   { id: 2, name: "Software Engineering" },
@@ -20,52 +21,61 @@ app.get("/courses", (req, res)=> {
   res.send(courses); //respond with the array of courses
 });
 
-//To get a specific course, we need to define a parameter id
-app.get("/courses/:id", (req, res)=> {
-  const course = courses.find(c => c.id === Number(req.params.id));
+// //To get a specific course, we need to define a parameter id
+// app.get("/courses/:id", (req, res)=> {
+//   const course = courses.find(c => c.id === Number(req.params.id));
 
-  //if the course does not exist return status 404 (not found)
-  if (!course)
-      return res
-          .status(404)
-          .send("The course with the given id was not found");
+//   //if the course does not exist return status 404 (not found)
+//   if (!course)
+//       return res
+//           .status(404)
+//           .send("The course with the given id was not found");
 
-  //return the object
-  res.send(course);
-});
+//   //return the object
+//   res.send(course);
+// });
 
-//using the http post request we can create a new course
-app.post("/courses", (req, res) =>{
-  //create a course object
-  const course = {
-      id: courses.length + 1,
-      name: req.body.name
-  };
+// //using the http post request we can create a new course
+// app.post("/courses", (req, res) =>{
+//   //create a course object
+//   const course = {
+//       id: courses.length + 1,
+//       name: req.body.name
+//   };
 
-  //add the course to the array
-  courses.push(course);
+//   //add the course to the array
+//   courses.push(course);
 
-  //return the course
-  res.send(course);
-});
+//   //return the course
+//   res.send(course);
+// });
 
 
-app.put("/courses/:id", (req, res)=> {
-  //get the course
-  const course = courses.find(c => c.id === parseInt(req.params.id));
+// app.put("/courses/:id", (req, res)=> {
+//   //get the course
+//   const course = courses.find(c => c.id === parseInt(req.params.id));
 
-  if (!course)
-      return res
-          .status(404)
-          .send("The course with the given id was not found");
+//   if (!course)
+//       return res
+//           .status(404)
+//           .send("The course with the given id was not found");
 
-  //update the course
-  course.name = req.body.name;
+//   //update the course
+//   course.name = req.body.name;
 
-  //returns the updated object
-  res.send(course);
-});
+//   //returns the updated object
+//   res.send(course);
+// });
 
-app.listen(PORT, ()=> {
-  console.log(`Listening on Port ${PORT}`);
+app.listen(PORT, async()=> {
+  // await ConnectDb();
+  // console.log(`Listening on Port ${PORT}`);
+  try{
+    await ConnectDb();
+    console.log(`Listening on Port ${PORT}`);
+  }
+  catch(err){
+    console.log(err.message)
+  }
+
 });
